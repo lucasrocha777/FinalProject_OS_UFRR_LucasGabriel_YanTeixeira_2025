@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Navegador Minimalista</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #top-bar {
+            background: #f0f0f0;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+        }
+
+        #url {
+            flex: 1;
+            padding: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 5px 10px;
+            margin-left: 5px;
+        }
+
+        #view {
+            flex: 1;
+            border: none;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="top-bar">
+        <input id="url" type="text" placeholder="Digite uma URL">
+        <button onclick="go()">Ir</button>
+    </div>
+    <iframe id="view" src="https://example.com"></iframe>
+
+    <script>
+        function go() {
+            const url = document.getElementById('url').value;
+            document.getElementById('view').src = url;
+        }
+    </script>
+</body>
+</html>
