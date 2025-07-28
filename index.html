@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Navegador Minimalista</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        #tab-bar {
+            background: #ccc;
+            padding: 5px;
+            display: flex;
+            gap: 5px;
+        }
+        .tab {
+            padding: 5px 10px;
+            background: #eee;
+            border: 1px solid #aaa;
+            cursor: pointer;
+        }
+        #top-bar {
+            display: flex;
+            gap: 5px;
+            padding: 5px;
+            background: #bbb;
+        }
+        #url {
+            flex: 1;
+            padding: 5px;
+        }
+        button {
+            padding: 5px 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="tab-bar">
+        <button class="tab" onclick="window.electronAPI.newTab()">+ Nova Aba</button>
+        <button class="tab" onclick="window.electronAPI.switchTab(0)">Aba 1</button>
+        <button class="tab" onclick="window.electronAPI.switchTab(1)">Aba 2</button>
+    </div>
+
+    <div id="top-bar">
+        <button onclick="window.electronAPI.back()">⬅</button>
+        <button onclick="window.electronAPI.forward()">➡</button>
+        <button onclick="window.electronAPI.reload()">🔄</button>
+        <input id="url" type="text" placeholder="Digite uma URL ou pesquisa">
+        <button onclick="go()">Ir</button>
+    </div>
+
+    <script>
+        function go() {
+            const url = document.getElementById("url").value;
+            window.electronAPI.navigate(url);
+        }
+
+        // Faz o Enter funcionar também
+        document.getElementById("url").addEventListener("keydown", function (event) {
+            if (event.key === "Enter") {
+                go();
+            }
+        });
+    </script>
+</body>
+</html>
