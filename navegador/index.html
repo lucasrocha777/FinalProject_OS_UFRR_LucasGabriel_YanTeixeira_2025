@@ -1,215 +1,323 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Gon Browser</title>
+    <title>Gon Freecss Web Browser</title>
     <style>
-        /* From Uiverse.io by TimTrayler */ 
-        .searchbar {
-        font-size: 14px;
-        font-family: arial, sans-serif;
-        color: #202124;
-        display: flex;
-        z-index: 3;
-        height: 38px;
-        background: white;
-        border: 1px solid #dfe1e5;
-        box-shadow: none;
-        border-radius: 24px;
-        margin: 0 auto;
-        width: 250px;
-        max-width: 224px;
+        :root {
+            --bg-color: #f5f5f5;
+            --text-color: #333;
+            --tab-bg: #e0e0e0;
+            --tab-active-bg: #cce5ff;
+            --top-bar-bg: #dcdcdc;
+            --searchbar-bg: white;
+            --searchbar-border: #d8d8d8;
+            --button-bg: #f0f0f0;
+            --button-hover: #e0e0e0;
+            --history-btn-bg: #009e2f;
+            --history-btn-hover: #007a24;
         }
 
-        .searchbar:hover {
-        box-shadow: 0 1px 6px rgb(32 33 36 / 28%);
-        border-color: rgba(223,225,229,0);
+        .dark-mode {
+            --bg-color: #1a1a1a;
+            --text-color: #f0f0f0;
+            --tab-bg: #2d2d2d;
+            --tab-active-bg: #004080;
+            --top-bar-bg: #252525;
+            --searchbar-bg: #333;
+            --searchbar-border: #444;
+            --button-bg: #444;
+            --button-hover: #555;
+            --history-btn-bg: #007a24;
+            --history-btn-hover: #005a18;
         }
 
-        .searchbar-wrapper {
-        flex: 1;
-        display: flex;
-        padding: 5px 8px 0 14px;
-        }
-
-        .searchbar-left {
-        font-size: 14px;
-        font-family: arial, sans-serif;
-        color: #202124;
-        display: flex;
-        align-items: center;
-        padding-right: 13px;
-        margin-top: -5px;
-        }
-
-        .search-icon-wrapper {
-        margin: auto;
-        }
-
-        .search-icon {
-        margin-top: 3px;
-        color: #9aa0a6;
-        height: 20px;
-        line-height: 20px;
-        width: 20px;
-        }
-
-        .searchbar-icon {
-        display: inline-block;
-        fill: currentColor;
-        height: 24px;
-        line-height: 24px;
-        position: relative;
-        width: 24px;
-        }
-
-        .searchbar-center {
-        display: flex;
-        flex: 1;
-        flex-wrap: wrap;
-        }
-
-        .searchbar-input-spacer {
-        color: transparent;
-        flex: 100%;
-        white-space: pre;
-        height: 34px;
-        font-size: 16px;
-        }
-
-        .searchbar-input {
-        background-color: transparent;
-        border: none;
-        margin: 0;
-        padding: 0;
-        color: rgba(0, 0, 0, .87);
-        word-wrap: break-word;
-        outline: none;
-        display: flex;
-        flex: 100%;
-        margin-top: -37px;
-        height: 34px;
-        font-size: 16px;
-        max-width: 100%;
-        width: 100%;
-        }
-
-        .searchbar-right {
-        display: flex;
-        flex: 0 0 auto;
-        margin-top: -5px;
-        align-items: stretch;
-        flex-direction: row
-        }
-
-        .searchbar-clear-icon {
-        margin-right: 12px
-        }
-
-        .voice-search {
-        flex: 1 0 auto;
-        display: flex;
-        cursor: pointer;
-        align-items: center;
-        border: 0;
-        background: transparent;
-        outline: none;
-        padding: 0 8px;
-        width: 2.8em;
-        }
         body {
             margin: 0;
             font-family: Arial, sans-serif;
+            background: var(--bg-color);
+            color: var(--text-color);
+            transition: background 0.3s, color 0.3s;
         }
+
         #tab-bar {
-            background: #ccc;
-            padding: 5px;
             display: flex;
-            gap: 5px;
+            align-items: center;
+            background: var(--tab-bg);
+            padding: 3px;
+            overflow-x: auto;
+            transition: background 0.3s;
         }
+
         .tab {
-            padding: 5px 10px;
-            background: #eee;
-            border: 1px solid #aaa;
+            background: var(--searchbar-bg);
+            padding: 2px 5px;
+            border: 1px solid var(--searchbar-border);
+            margin-right: 3px;
+            border-radius: 3px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: var(--tab-active-bg);
+            border-color: #66afe9;
+        }
+
+        .tab span {
+            margin-right: 8px;
+            color: var(--text-color);
+        }
+
+        .tab .close-btn {
+            background: none;
+            border: none;
+            color: red;
+            font-weight: bold;
             cursor: pointer;
         }
+
         #top-bar {
             display: flex;
-            gap: 5px;
-            padding: 5px;
-            background: #bbb;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 10px;
+            background: var(--top-bar-bg);
+            transition: background 0.3s;
         }
-        #url {
+
+        .searchbar {
             flex: 1;
-            padding: 5px;
+            display: flex;
+            align-items: center;
+            background: var(--searchbar-bg);
+            border: 2px solid var(--searchbar-border);
+            border-radius: 24px;
+            padding: 5px 10px;
+            max-width: 800px;
+            max-height: 30px;
+            transition: all 0.3s;
         }
+
+        .searchbar input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            background: transparent;
+            color: var(--text-color);
+        }
+
         button {
             padding: 5px 10px;
+            cursor: pointer;
+            background: var(--button-bg);
+            border: none;
+            border-radius: 4px;
+            color: var(--text-color);
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background: var(--button-hover);
+        }
+
+        #history-btn {
+            background: var(--history-btn-bg);
+            color: white;
+        }
+
+        #history-btn:hover {
+            background: var(--history-btn-hover);
+        }
+
+        #home-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: calc(100vh - 80px); /* Ajuste para a altura da barra */
+            background: url('GONxGON.png') center center no-repeat;
+            background-size: 300px;
+        }
+
+        #home-screen h1 {
+            margin-top: 200px;
+            font-size: 32px;
+            color: #009e2f;
+        }
+
+        #home-screen .searchbar {
+            margin-top: 300px; /* Posiciona abaixo da imagem */
+        }
+
+        /* Theme Switch Styles */
+        .theme-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 24px;
+            margin-left: 10px;
+        }
+
+        .theme-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #009e2f;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(36px);
+        }
+
+        .theme-icon {
+            position: absolute;
+            top: 2px;
+            font-size: 14px;
+            color: var(--text-color);
+        }
+
+        .moon {
+            right: 8px;
+        }
+
+        .sun {
+            left: 8px;
         }
     </style>
 </head>
 <body>
+    <div id="tab-bar">
+        <button onclick="window.electronAPI.newTab()">+</button>
+    </div>
+
     <div id="top-bar">
-        <button class="tab" onclick="window.electronAPI.newTab()">+ Nova Aba</button>
-        <button class="tab" onclick="window.electronAPI.switchTab(0)">Aba 1</button>
-        <button class="tab" onclick="window.electronAPI.switchTab(1)">Aba 2</button>
-        <!-- From Uiverse.io by TimTrayler --> 
         <div class="searchbar">
-            <div class="searchbar-wrapper">
-                <div class="searchbar-left">
-                    <div class="search-icon-wrapper">
-                        <span class="search-icon searchbar-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z">
-                                </path>
-                            </svg>
-                        </span>
-                    </div>
-                </div>
-
-                <div class="searchbar-center">
-                    <div class="searchbar-input-spacer"></div>
-
-                    <input type="text" class="searchbar-input" maxlength="2048" name="q" autocapitalize="off" autocomplete="off" title="Search" role="combobox" placeholder="Search Google">
-                </div>
-
-                <div class="searchbar-right">
-                    <svg class="voice-search" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                        <path fill="#4285f4" d="m12 15c1.66 0 3-1.31 3-2.97v-7.02c0-1.66-1.34-3.01-3-3.01s-3 1.34-3 3.01v7.02c0 1.66 1.34 2.97 3 2.97z">
-                        </path>
-                        <path fill="#34a853" d="m11 18.08h2v3.92h-2z"></path>
-                        <path fill="#fbbc05" d="m7.05 16.87c-1.27-1.33-2.05-2.83-2.05-4.87h2c0 1.45 0.56 2.42 1.47 3.38v0.32l-1.15 1.18z">
-                        </path>
-                        <path fill="#ea4335" d="m12 16.93a4.97 5.25 0 0 1 -3.54 -1.55l-1.41 1.49c1.26 1.34 3.02 2.13 4.95 2.13 3.87 0 6.99-2.92 6.99-7h-1.99c0 2.92-2.24 4.93-5 4.93z">
-                        </path>
-                    </svg>
-                </div>
-            </div>
+            <input id="url" type="text" placeholder="Pesquisar no Google ou digitar URL...">
         </div>
         <button onclick="window.electronAPI.back()">⬅</button>
         <button onclick="window.electronAPI.forward()">➡</button>
         <button onclick="window.electronAPI.reload()">🔄</button>
+        <button id="history-btn" onclick="window.electronAPI.showHistory()">Histórico</button>
+        
+        <label class="theme-switch" title="Alternar tema">
+            <input type="checkbox" id="theme-checkbox">
+            <span class="slider"></span>
+            <span class="theme-icon sun"></span>
+            <span class="theme-icon moon"></span>
+        </label>
+    </div>
+
+    <div id="home-screen">
+        <div class="searchbar">
+            <input id="home-search" type="text" placeholder="Pesquisar no Google...">
+        </div>
     </div>
 
     <script>
-        function go() {
-            const input = document.querySelector(".searchbar-input");
-            const url = input.value.trim();
-            if (url) {
-                window.electronAPI.navigate(url);
+        // Tema escuro/claro
+        const themeCheckbox = document.getElementById('theme-checkbox');
+
+        window.electronAPI.getDarkMode().then(dark => {
+            themeCheckbox.checked = dark;
+            document.body.classList.toggle('dark-mode', dark);
+        });
+
+        themeCheckbox.addEventListener('change', function() {
+            const isDark = this.checked;
+            window.electronAPI.setDarkMode(isDark);
+            document.body.classList.toggle('dark-mode', isDark);
+        });
+
+        // Solicita o estado atual do tema ao carregar
+        window.electronAPI.getDarkMode().then(dark => {
+            themeCheckbox.checked = dark;
+            if (dark) {
+                document.body.classList.add('dark-mode');
             }
+        });
+
+        function go() {
+            const url = document.getElementById("url").value;
+            window.electronAPI.navigate(url);
         }
 
-        // Faz o Enter funcionar na nova barra de pesquisa
-        document.addEventListener("DOMContentLoaded", () => {
-            const input = document.querySelector(".searchbar-input");
-            input.addEventListener("keydown", function (event) {
-                if (event.key === "Enter") {
-                    go();
-                }
+        document.getElementById("url").addEventListener("keydown", function (e) {
+            if (e.key === "Enter") go();
+        });
+
+        document.getElementById("home-search").addEventListener("keydown", function (e) {
+            if (e.key === "Enter") {
+                const query = this.value;
+                window.electronAPI.navigate(query);
+                document.getElementById("home-screen").style.display = "none";
+            }
+        });
+
+        window.electronAPI.onUpdateTabs((tabs, currentIndex) => {
+            const tabBar = document.getElementById("tab-bar");
+            tabBar.innerHTML = '<button onclick="window.electronAPI.newTab()">+</button>';
+
+            tabs.forEach((tab, i) => {
+                const el = document.createElement("div");
+                el.classList.add("tab");
+                if (i === currentIndex) el.classList.add("active");
+
+                const span = document.createElement("span");
+                span.textContent = tab.title || `Aba ${i + 1}`;
+                el.appendChild(span);
+
+                const closeBtn = document.createElement("button");
+                closeBtn.textContent = "×";
+                closeBtn.classList.add("close-btn");
+                closeBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    window.electronAPI.closeTab(i);
+                };
+
+                el.appendChild(closeBtn);
+                el.onclick = () => window.electronAPI.switchTab(i);
+
+                tabBar.appendChild(el);
             });
+
+            const home = document.getElementById("home-screen");
+            if (tabs.length === 0) {
+                home.style.display = "flex";
+            } else {
+                home.style.display = "none";
+            }
         });
     </script>
-
 </body>
 </html>

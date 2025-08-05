@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Histórico - Gon Freecss Web Browser</title>
+    <style>
+        :root {
+            --bg-color: #f5f5f5;
+            --text-color: #333;
+            --container-bg: white;
+            --container-shadow: rgba(0,0,0,0.1);
+            --item-bg: white;
+            --item-hover: #f0f0f0;
+            --title-color: #0066cc;
+            --url-color: #666;
+            --time-color: #666;
+            --clear-btn-bg: #ff4444;
+            --clear-btn-hover: #cc0000;
+        }
+
+        .dark-mode {
+            --bg-color: #1a1a1a;
+            --text-color: #f0f0f0;
+            --container-bg: #252525;
+            --container-shadow: rgba(0,0,0,0.3);
+            --item-bg: #333;
+            --item-hover: #444;
+            --title-color: #4d9eff;
+            --url-color: #aaa;
+            --time-color: #aaa;
+            --clear-btn-bg: #cc0000;
+            --clear-btn-hover: #990000;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: var(--bg-color);
+            color: var(--text-color);
+            transition: all 0.3s;
+        }
+
+        .history-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--container-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px var(--container-shadow);
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        h1 {
+            color: #009e2f;
+            text-align: center;
+        }
+
+        .history-item {
+            padding: 10px;
+            border-bottom: 1px solid var(--item-hover);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--item-bg);
+            transition: all 0.3s;
+        }
+
+        .history-item:hover {
+            background: var(--item-hover);
+        }
+
+        .history-info {
+            flex-grow: 1;
+        }
+
+        .history-title {
+            font-weight: bold;
+            color: var(--title-color);
+            margin-bottom: 4px;
+            transition: color 0.3s;
+        }
+
+        .history-url {
+            color: var(--url-color);
+            font-size: 0.9em;
+            word-break: break-all;
+            transition: color 0.3s;
+        }
+
+        .history-time {
+            color: var(--time-color);
+            font-size: 0.9em;
+            white-space: nowrap;
+            margin-left: 20px;
+            transition: color 0.3s;
+        }
+
+        .clear-btn {
+            background: var(--clear-btn-bg);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            transition: all 0.3s;
+        }
+
+        .clear-btn:hover {
+            background: var(--clear-btn-hover);
+        }
+
+        .empty-history {
+            text-align: center;
+            color: var(--url-color);
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="history-container">
+        <h1>Histórico de Navegação</h1>
+        <div id="history-list"></div>
+        <button class="clear-btn" onclick="clearHistory()">Limpar Histórico</button>
+    </div>
+
+    <script>
+        // Verificar tema do navegador principal
+        window.electronAPI.getDarkMode().then(dark => {
+            if (dark) {
+                document.body.classList.add('dark-mode');
+            }
+        });
+
+        // Ouvir atualizações de tema
+        window.electronAPI.onUpdateTheme((dark) => {
+            document.body.classList.toggle('dark-mode', dark);
+        });
+
+        async function loadHistory() {
+            const history = await window.electronAPI.getHistory();
+            const list = document.getElementById('history-list');
+            
+            if (history.length === 0) {
+                list.innerHTML = '<div class="empty-history">Nenhum item no histórico.</div>';
+                return;
+            }
+            
+            list.innerHTML = history.map(item => `
+                <div class="history-item" onclick="navigateTo('${item.url}')">
+                    <div class="history-info">
+                        <div class="history-title">${item.title}</div>
+                        <div class="history-url">${item.url}</div>
+                    </div>
+                    <div class="history-time">${new Date(item.timestamp).toLocaleString()}</div>
+                </div>
+            `).join('');
+        }
+        
+        function navigateTo(url) {
+            window.electronAPI.navigate(url);
+            window.close();
+        }
+        
+        async function clearHistory() {
+            await window.electronAPI.clearHistory();
+            loadHistory();
+        }
+        
+        window.electronAPI.onHistoryUpdated(() => {
+            loadHistory();
+        });
+        
+        window.onload = loadHistory;
+    </script>
+</body>
+</html>
