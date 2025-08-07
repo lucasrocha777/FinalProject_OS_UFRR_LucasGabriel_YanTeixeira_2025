@@ -1,4 +1,4 @@
-# Navegador Web Minimalista (Projeto Final de Sistemas Operacionais)
+# Navegador Gon Web Browser (Projeto Final de Sistemas Operacionais)
 
 Projeto final da disciplina **Sistemas Operacionais (DCC403)** da **Universidade Federal de Roraima (UFRR)**.  
 O objetivo é **construir um navegador web minimalista** que aplique conceitos fundamentais de sistemas operacionais, tais como:
@@ -9,6 +9,7 @@ O objetivo é **construir um navegador web minimalista** que aplique conceitos f
 - Rede e segurança (sandboxing)
 
 ---
+<img width="3920" height="2160" alt="Image" src="https://github.com/user-attachments/assets/b8ebe8a2-f9dd-47f6-b33f-bba11dbe4036" />
 
 ## Descrição do Projeto
 
