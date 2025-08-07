@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Histórico - Gon Freecss Web Browser</title>
+    <style>
+        /* Variáveis CSS para cores e transições.
+           Isso facilita a gestão do tema claro/escuro. */
+        :root {
+            --bg-color: #f5f5f5; /* Cor de fundo principal (tema claro) */
+            --text-color: #333; /* Cor do texto principal (tema claro) */
+            --container-bg: white; /* Cor de fundo do contêiner principal */
+            --container-shadow: rgba(0,0,0,0.1); /* Sombra do contêiner */
+            --item-bg: white; /* Cor de fundo dos itens da lista */
+            --item-hover: #f0f0f0; /* Cor de fundo ao passar o mouse sobre o item */
+            --title-color: #0066cc; /* Cor do título do histórico */
+            --url-color: #666; /* Cor da URL */
+            --time-color: #666; /* Cor do horário */
+            --clear-btn-bg: #ff4444; /* Cor de fundo do botão "Limpar Histórico" */
+            --clear-btn-hover: #cc0000; /* Cor de fundo do botão ao passar o mouse */
+        }
+
+        /* Definição do tema escuro.
+           As variáveis são sobrescritas para cores mais escuras. */
+        .dark-mode {
+            --bg-color: #1a1a1a;
+            --text-color: #f0f0f0;
+            --container-bg: #252525;
+            --container-shadow: rgba(0,0,0,0.3);
+            --item-bg: #333;
+            --item-hover: #444;
+            --title-color: #4d9eff;
+            --url-color: #aaa;
+            --time-color: #aaa;
+            --clear-btn-bg: #cc0000;
+            --clear-btn-hover: #990000;
+        }
+
+        /* Estilos básicos para o corpo da página */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: var(--bg-color); /* Usa a variável de cor de fundo */
+            color: var(--text-color); /* Usa a variável de cor do texto */
+            transition: all 0.3s; /* Transição suave para mudanças de tema */
+        }
+
+        /* Estilo para o contêiner principal que envolve o histórico */
+        .history-container {
+            max-width: 800px;
+            margin: 0 auto; /* Centraliza o contêiner */
+            background: var(--container-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px var(--container-shadow);
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        /* Estilo para o título principal da página */
+        h1 {
+            color: #009e2f; /* Cor verde para o título "Histórico de Navegação" */
+            text-align: center;
+        }
+
+        /* Estilo para cada item individual do histórico */
+        .history-item {
+            padding: 10px;
+            border-bottom: 1px solid var(--item-hover);
+            display: flex; /* Usa flexbox para alinhar o conteúdo (título/url e horário) */
+            justify-content: space-between; /* Distribui o espaço entre os elementos */
+            align-items: center; /* Alinha verticalmente */
+            background: var(--item-bg);
+            transition: all 0.3s;
+        }
+
+        /* Estilo ao passar o mouse sobre um item do histórico */
+        .history-item:hover {
+            background: var(--item-hover);
+        }
+
+        /* Estilo para a seção de informações (título e URL) */
+        .history-info {
+            flex-grow: 1; /* Permite que esta seção ocupe todo o espaço disponível */
+        }
+
+        /* Estilo para o título da página visitada */
+        .history-title {
+            font-weight: bold;
+            color: var(--title-color);
+            margin-bottom: 4px;
+            transition: color 0.3s;
+        }
+
+        /* Estilo para a URL da página visitada */
+        .history-url {
+            color: var(--url-color);
+            font-size: 0.9em;
+            word-break: break-all; /* Quebra palavras longas para evitar overflow */
+            transition: color 0.3s;
+        }
+
+        /* Estilo para o horário da visita */
+        .history-time {
+            color: var(--time-color);
+            font-size: 0.9em;
+            white-space: nowrap; /* Impede que o horário seja quebrado em várias linhas */
+            margin-left: 20px;
+            transition: color 0.3s;
+        }
+
+        /* Estilo para o botão "Limpar Histórico" */
+        .clear-btn {
+            background: var(--clear-btn-bg);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto; /* Centraliza o botão */
+            transition: all 0.3s;
+        }
+
+        /* Estilo ao passar o mouse sobre o botão "Limpar Histórico" */
+        .clear-btn:hover {
+            background: var(--clear-btn-hover);
+        }
+
+        /* Estilo para a mensagem de histórico vazio */
+        .empty-history {
+            text-align: center;
+            color: var(--url-color);
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="history-container">
+        <h1>Histórico de Navegação</h1>
+        <div id="history-list"></div>
+        <button class="clear-btn" onclick="clearHistory()">Limpar Histórico</button>
+    </div>
+
+    <script>
+        // O objeto `window.electronAPI` é fornecido pelo contexto do Electron/Preload script.
+        // Ele expõe funções para interagir com o processo principal da aplicação.
+
+        // 1. Lógica para o tema claro/escuro
+        // Acessa a API do Electron para verificar o tema atual e aplica a classe 'dark-mode' se necessário.
+        window.electronAPI.getDarkMode().then(dark => {
+            if (dark) {
+                document.body.classList.add('dark-mode');
+            }
+        });
+
+        // Escuta por eventos de atualização do tema vindos do processo principal.
+        // A função de callback é executada sempre que o tema muda.
+        window.electronAPI.onUpdateTheme((dark) => {
+            document.body.classList.toggle('dark-mode', dark);
+        });
+
+        // 2. Funções de manipulação do histórico
+
+        // Função assíncrona para carregar o histórico.
+        // Usa `await` para esperar a resposta da API do Electron.
+        async function loadHistory() {
+            // Pega o histórico usando a API do Electron
+            const history = await window.electronAPI.getHistory();
+            const list = document.getElementById('history-list');
+            
+            // Se o histórico estiver vazio, mostra uma mensagem
+            if (history.length === 0) {
+                list.innerHTML = '<div class="empty-history">Nenhum item no histórico.</div>';
+                return;
+            }
+            
+            // Mapeia o array de histórico para uma string de HTML
+            // `map()` transforma cada objeto `item` em uma string HTML
+            // `join('')` concatena todas as strings para formar um único bloco HTML
+            list.innerHTML = history.map(item => `
+                <div class="history-item" onclick="navigateTo('${item.url}')">
+                    <div class="history-info">
+                        <div class="history-title">${item.title}</div>
+                        <div class="history-url">${item.url}</div>
+                    </div>
+                    <div class="history-time">${new Date(item.timestamp).toLocaleString()}</div>
+                </div>
+            `).join('');
+        }
+        
+        // Função para navegar para uma URL e fechar a janela do histórico.
+        // Chamada quando o usuário clica em um item do histórico.
+        function navigateTo(url) {
+            window.electronAPI.navigate(url);
+            window.close();
+        }
+        
+        // Função assíncrona para limpar o histórico.
+        // Chama a API do Electron para limpar os dados e, em seguida, recarrega a lista.
+        async function clearHistory() {
+            await window.electronAPI.clearHistory();
+            loadHistory();
+        }
+        
+        // Escuta por atualizações de histórico.
+        // Isso garante que a lista seja recarregada se o histórico for alterado em outro lugar.
+        window.electronAPI.onHistoryUpdated(() => {
+            loadHistory();
+        });
+        
+        // Quando a página é carregada, a função `loadHistory` é chamada.
+        window.onload = loadHistory;
+    </script>
+</body>
+</html>
