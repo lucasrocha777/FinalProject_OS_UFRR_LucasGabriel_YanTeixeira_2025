@@ -1,55 +1,364 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Navegador Minimalista</title>
+    <title>Gon Freecss Web Browser</title>
     <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
+        /* Bloco de variáveis CSS para controle de tema (claro) */
+        :root {
+            --bg-color: #f5f5f5; /* Cor de fundo da página */
+            --text-color: #333; /* Cor do texto */
+            --tab-bg: #e0e0e0; /* Cor de fundo da barra de abas */
+            --tab-active-bg: #cce5ff; /* Cor da aba ativa */
+            --top-bar-bg: #dcdcdc; /* Cor de fundo da barra superior (endereço e botões) */
+            --searchbar-bg: white; /* Cor de fundo da barra de pesquisa */
+            --searchbar-border: #d8d8d8; /* Cor da borda da barra de pesquisa */
+            --button-bg: #f0f0f0; /* Cor de fundo dos botões padrão */
+            --button-hover: #e0e0e0; /* Cor de fundo dos botões ao passar o mouse */
+            --history-btn-bg: #009e2f; /* Cor de fundo do botão de histórico */
+            --history-btn-hover: #007a24; /* Cor de fundo do botão de histórico ao passar o mouse */
         }
 
-        #top-bar {
-            background: #f0f0f0;
-            padding: 5px;
+        /* Bloco de variáveis CSS para controle de tema (escuro) */
+        /* Sobrescreve as variáveis do :root quando a classe .dark-mode está ativa */
+        .dark-mode {
+            --bg-color: #1a1a1a;
+            --text-color: #f0f0f0;
+            --tab-bg: #2d2d2d;
+            --tab-active-bg: #004080;
+            --top-bar-bg: #252525;
+            --searchbar-bg: #333;
+            --searchbar-border: #444;
+            --button-bg: #444;
+            --button-hover: #555;
+            --history-btn-bg: #007a24;
+            --history-btn-hover: #005a18;
+        }
+
+        /* Estilos globais do corpo da página */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: var(--bg-color); /* Usa a variável de cor */
+            color: var(--text-color); /* Usa a variável de cor */
+            transition: background 0.3s, color 0.3s; /* Transição suave para mudança de tema */
+        }
+
+        /* Estilos da barra de abas */
+        #tab-bar {
             display: flex;
             align-items: center;
+            background: var(--tab-bg);
+            padding: 3px;
+            overflow-x: auto; /* Permite rolar horizontalmente se houver muitas abas */
+            transition: background 0.3s;
         }
 
-        #url {
-            flex: 1;
-            padding: 5px;
-            font-size: 16px;
+        /* Estilos de cada aba individual */
+        .tab {
+            background: var(--searchbar-bg);
+            padding: 2px 5px;
+            border: 1px solid var(--searchbar-border);
+            margin-right: 3px;
+            border-radius: 3px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s;
         }
 
-        button {
+        /* Estilo para a aba que está ativa no momento */
+        .tab.active {
+            background: var(--tab-active-bg);
+            border-color: #66afe9;
+        }
+
+        /* Estilo para o texto do título da aba */
+        .tab span {
+            margin-right: 8px;
+            color: var(--text-color);
+        }
+
+        /* Estilo do botão de fechar aba (o 'x') */
+        .tab .close-btn {
+            background: none;
+            border: none;
+            color: red;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Estilos da barra superior (onde ficam a URL e os botões de navegação) */
+        #top-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px; /* Espaço entre os elementos */
+            padding: 6px 10px;
+            background: var(--top-bar-bg);
+            transition: background 0.3s;
+        }
+
+        /* Estilos da barra de pesquisa/URL */
+        .searchbar {
+            flex: 1; /* Permite que ocupe o espaço disponível */
+            display: flex;
+            align-items: center;
+            background: var(--searchbar-bg);
+            border: 2px solid var(--searchbar-border);
+            border-radius: 24px;
             padding: 5px 10px;
-            margin-left: 5px;
+            max-width: 800px;
+            max-height: 30px;
+            transition: all 0.3s;
         }
 
-        #view {
+        /* Estilos do campo de entrada de texto dentro da barra de pesquisa */
+        .searchbar input {
             flex: 1;
             border: none;
+            outline: none;
+            font-size: 16px;
+            background: transparent;
+            color: var(--text-color);
         }
 
+        /* Estilos gerais para os botões */
+        button {
+            padding: 5px 10px;
+            cursor: pointer;
+            background: var(--button-bg);
+            border: none;
+            border-radius: 4px;
+            color: var(--text-color);
+            transition: all 0.3s;
+        }
+
+        /* Efeito ao passar o mouse sobre os botões */
+        button:hover {
+            background: var(--button-hover);
+        }
+
+        /* Estilos específicos para o botão de histórico */
+        #history-btn {
+            background: var(--history-btn-bg);
+            color: white;
+        }
+
+        #history-btn:hover {
+            background: var(--history-btn-hover);
+        }
+
+        /* Estilos para a tela inicial */
+        #home-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: calc(100vh - 80px); /* Altura total da janela menos a altura das barras */
+            background: url('GONxGON.png') center center no-repeat; /* Imagem de fundo */
+            background-size: 300px; /* Tamanho da imagem */
+        }
+
+        /* Estilos para o título na tela inicial */
+        #home-screen h1 {
+            margin-top: 200px;
+            font-size: 32px;
+            color: #009e2f;
+        }
+
+        /* Estilos para a barra de pesquisa na tela inicial */
+        #home-screen .searchbar {
+            margin-top: 300px; /* Posiciona abaixo da imagem */
+        }
+
+        /* Estilos para o switch de tema */
+        .theme-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 24px;
+            margin-left: 10px;
+        }
+
+        /* Oculta o checkbox nativo */
+        .theme-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        /* Estilo para a barra deslizante do switch */
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        /* Estilo para o círculo do switch */
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        /* Estilo da barra deslizante quando o checkbox está marcado (tema escuro) */
+        input:checked + .slider {
+            background-color: #009e2f;
+        }
+
+        /* Movimento do círculo quando o checkbox está marcado */
+        input:checked + .slider:before {
+            transform: translateX(36px);
+        }
+
+        /* Estilo para os ícones de sol e lua */
+        .theme-icon {
+            position: absolute;
+            top: 2px;
+            font-size: 14px;
+            color: var(--text-color);
+        }
+
+        .moon {
+            right: 8px;
+        }
+
+        .sun {
+            left: 8px;
+        }
     </style>
 </head>
 <body>
-    <div id="top-bar">
-        <input id="url" type="text" placeholder="Digite uma URL">
-        <button onclick="go()">Ir</button>
+    <div id="tab-bar">
+        <button onclick="window.electronAPI.newTab()">+</button>
     </div>
-    <iframe id="view" src="https://example.com"></iframe>
+
+    <div id="top-bar">
+        <div class="searchbar">
+            <input id="url" type="text" placeholder="Pesquisar no Google ou digitar URL...">
+        </div>
+        <button onclick="window.electronAPI.back()">⬅</button>
+        <button onclick="window.electronAPI.forward()">➡</button>
+        <button onclick="window.electronAPI.reload()">🔄</button>
+        <button id="history-btn" onclick="window.electronAPI.showHistory()">Histórico</button>
+        
+        <label class="theme-switch" title="Alternar tema">
+            <input type="checkbox" id="theme-checkbox">
+            <span class="slider"></span>
+            <span class="theme-icon sun"></span>
+            <span class="theme-icon moon"></span>
+        </label>
+    </div>
+
+    <div id="home-screen">
+        <div class="searchbar">
+            <input id="home-search" type="text" placeholder="Pesquisar no Google...">
+        </div>
+    </div>
 
     <script>
+        // O objeto `window.electronAPI` é fornecido pelo script `preload.js`
+        // e permite a comunicação entre a interface do usuário (HTML) e o processo principal do Electron.
+
+        // Lógica do tema escuro/claro
+        const themeCheckbox = document.getElementById('theme-checkbox');
+
+        // Pede o estado inicial do tema ao processo principal
+        window.electronAPI.getDarkMode().then(dark => {
+            themeCheckbox.checked = dark;
+            document.body.classList.toggle('dark-mode', dark);
+        });
+
+        // Adiciona um listener para o evento de mudança do checkbox
+        themeCheckbox.addEventListener('change', function() {
+            const isDark = this.checked;
+            // Informa ao processo principal que o tema deve ser alterado
+            window.electronAPI.setDarkMode(isDark);
+            // Altera a classe CSS para aplicar o tema imediatamente
+            document.body.classList.toggle('dark-mode', isDark);
+        });
+
+        // Solicita o estado atual do tema ao carregar a página para garantir a consistência
+        window.electronAPI.getDarkMode().then(dark => {
+            themeCheckbox.checked = dark;
+            if (dark) {
+                document.body.classList.add('dark-mode');
+            }
+        });
+
+        // Função para navegar para a URL digitada na barra superior
         function go() {
-            const url = document.getElementById('url').value;
-            document.getElementById('view').src = url;
+            const url = document.getElementById("url").value;
+            // Chama a função `Maps` da API do Electron
+            window.electronAPI.navigate(url);
         }
+
+        // Adiciona um listener para a tecla "Enter" na barra de URL
+        document.getElementById("url").addEventListener("keydown", function (e) {
+            if (e.key === "Enter") go();
+        });
+
+        // Adiciona um listener para a tecla "Enter" na barra de pesquisa da tela inicial
+        document.getElementById("home-search").addEventListener("keydown", function (e) {
+            if (e.key === "Enter") {
+                const query = this.value;
+                // Navega para a pesquisa e esconde a tela inicial
+                window.electronAPI.navigate(query);
+                document.getElementById("home-screen").style.display = "none";
+            }
+        });
+
+        // Ouve o evento de atualização de abas do processo principal
+        // Esta função é chamada sempre que uma aba é adicionada, removida ou trocada
+        window.electronAPI.onUpdateTabs((tabs, currentIndex) => {
+            const tabBar = document.getElementById("tab-bar");
+            // Limpa o conteúdo atual da barra de abas e adiciona o botão '+'
+            tabBar.innerHTML = '<button onclick="window.electronAPI.newTab()">+</button>';
+
+            // Itera sobre o array de abas e cria um elemento HTML para cada uma
+            tabs.forEach((tab, i) => {
+                const el = document.createElement("div");
+                el.classList.add("tab");
+                if (i === currentIndex) el.classList.add("active"); // Adiciona a classe 'active' se for a aba atual
+
+                const span = document.createElement("span");
+                span.textContent = tab.title || `Aba ${i + 1}`; // Usa o título da aba ou um nome padrão
+                el.appendChild(span);
+
+                const closeBtn = document.createElement("button");
+                closeBtn.textContent = "×";
+                closeBtn.classList.add("close-btn");
+                closeBtn.onclick = (e) => {
+                    e.stopPropagation(); // Impede que o clique no botão fechar ative a aba
+                    window.electronAPI.closeTab(i); // Chama a API para fechar a aba
+                };
+
+                el.appendChild(closeBtn);
+                el.onclick = () => window.electronAPI.switchTab(i); // Chama a API para trocar para a aba clicada
+
+                tabBar.appendChild(el);
+            });
+
+            // Lógica para mostrar/esconder a tela inicial
+            const home = document.getElementById("home-screen");
+            if (tabs.length === 0) {
+                home.style.display = "flex"; // Mostra a tela inicial se não houver abas
+            } else {
+                home.style.display = "none"; // Esconde a tela inicial se houver abas
+            }
+        });
     </script>
 </body>
 </html>
